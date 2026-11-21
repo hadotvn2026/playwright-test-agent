@@ -13,10 +13,18 @@ const FIELD_LABELS: Record<NativePickerField, string> = {
     week: 'Week',
 };
 
+const PAGE_URL = 'https://the-internet.herokuapp.com/date_pickers';
+
 export class DateTimePickersPage {
     private readonly page: Page;
     private readonly inputs: Record<NativePickerField, Locator>;
+    private readonly openCalendarButton: Locator;
+    private readonly previousMonthButton: Locator;
+    private readonly nextMonthButton: Locator;
     readonly selectedValues: Locator; // Exposed solely for web-first assertion in tests/
+    readonly appointmentInput: Locator; // Exposed solely for web-first assertion in tests/
+    readonly calendar: Locator; // Exposed solely for web-first assertion in tests/
+    readonly calendarMonth: Locator; // Exposed solely for web-first assertion in tests/
 
     constructor(page: Page) {
         this.page = page;
@@ -31,10 +39,40 @@ export class DateTimePickersPage {
         this.selectedValues = page
             .getByRole('paragraph')
             .filter({ hasText: /^(No values yet|(date|time|datetime|month|week): )/ });
+
+        // Calendar widget ("Appointment"): read-only field + toggle button + month grid
+        this.appointmentInput = page.getByRole('textbox', { name: 'Appointment', exact: true });
+        this.openCalendarButton = page.getByRole('button', { name: 'Open calendar', exact: true });
+        this.previousMonthButton = page.getByRole('button', { name: 'Previous month', exact: true });
+        this.nextMonthButton = page.getByRole('button', { name: 'Next month', exact: true });
+        this.calendar = page.getByRole('table');
+        this.calendarMonth = page.getByRole('strong').filter({ hasText: /^[A-Z][a-z]+ \d{4}$/ });
     }
 
     async open(): Promise<void> {
-        await this.page.goto('https://the-internet.herokuapp.com/date_pickers');
+        await this.page.goto(PAGE_URL);
+    }
+
+    /**
+     * Opens the page with the calendar starting on a fixed month (`YYYY-MM`) and opens the calendar.
+     * Use this instead of the default (current month) so tests do not depend on the run date.
+     */
+    async openCalendarAt(month: string): Promise<void> {
+        await this.page.goto(`${PAGE_URL}?month=${encodeURIComponent(month)}`);
+        await this.openCalendarButton.click();
+    }
+
+    /** Moves the open calendar forward (positive) or back (negative) by the given number of months. */
+    async moveCalendar(months: number): Promise<void> {
+        const button = months >= 0 ? this.nextMonthButton : this.previousMonthButton;
+        for (let i = 0; i < Math.abs(months); i++) {
+            await button.click();
+        }
+    }
+
+    /** Picks a day of the month currently shown in the open calendar. */
+    async pickAppointmentDay(day: number): Promise<void> {
+        await this.calendar.getByRole('button', { name: String(day), exact: true }).click();
     }
 
     /** Sets the given native pickers using their standard value formats (e.g. date 2026-04-15, week 2026-W16). */
