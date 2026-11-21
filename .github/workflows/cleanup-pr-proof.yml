@@ -1,0 +1,34 @@
+name: Cleanup PR Video Proof After Merge
+
+on:
+  pull_request:
+    types: [closed]
+    branches:
+      - main
+
+permissions:
+  contents: write
+
+jobs:
+  cleanup-proof:
+    # Chỉ chạy khi PR thực sự được merge (bỏ qua nếu chỉ close mà không merge)
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout main
+        uses: actions/checkout@v7
+        with:
+          ref: main
+          fetch-depth: 1
+
+      - name: Remove docs/pr-proof directory if present
+        run: |
+          if [ -d "docs/pr-proof" ]; then
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git rm -rf docs/pr-proof
+            git commit -m "chore: clean up temporary PR verification videos [skip ci]"
+            git push origin main
+          else
+            echo "No PR proof directory to clean up."
+          fi
