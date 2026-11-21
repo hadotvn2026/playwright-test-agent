@@ -2,7 +2,9 @@ import { test, expect } from '../fixtures/heroku.fixture';
 
 test('login successfully with valid credentials', async ({ loginPage }) => {
     await loginPage.open();
-    await loginPage.login('tomsmith', 'SuperSecretPassword!');
+    const username = process.env.USERNAME!;
+    const password = process.env.PASSWORD ?? 'defaultPassword';
+    await loginPage.login(username, password);
     await expect(loginPage.secureAreaHeading).toBeVisible();
 });
 
