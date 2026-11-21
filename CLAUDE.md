@@ -65,3 +65,14 @@ export class LoginPage {
     await this.submitButton.click();
   }
 }
+```
+
+---
+
+## 3. Agentic Workflow (Issue → PR → merge → close)
+- Claude Code runs locally via `/agent-implement [N]`; GitHub Actions only runs deterministic steps (CI, proof, close issue).
+- Work for an issue happens on branch `agent/issue-<N>` and follows `.claude/skills/agent-implement/SKILL.md`.
+- Every PR must keep `npm run gate:static` and `npx playwright test` green; these are required checks on `main`.
+- Credentials come from env via `requireEnv()` (`utils/env.utils.ts`): `.dev.env` locally, repository secrets on CI. Never hard-code them.
+- Do not commit recordings; `agent-proof.yml` publishes video/trace proof to the `pr-proof` branch.
+- Full loop, labels and setup: `docs/agent-workflow.md`.

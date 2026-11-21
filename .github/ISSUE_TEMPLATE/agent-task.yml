@@ -1,0 +1,52 @@
+name: 🤖 Agent task (Playwright test)
+description: Giao việc cho Claude Code. Chạy /agent-implement ở máy local để agent implement theo CLAUDE.md và mở PR kèm video bằng chứng.
+title: "[Agent] "
+labels: ["agent-ready"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Điền đủ các mục bắt buộc. Thiếu thông tin → agent sẽ hỏi lại trên issue và gắn `agent-blocked`.
+        Chỉ issue do owner/collaborator tạo mới được agent xử lý.
+  - type: input
+    id: target_url
+    attributes:
+      label: Target URL
+      description: Trang cần test
+      placeholder: https://the-internet.herokuapp.com/login
+    validations:
+      required: true
+  - type: textarea
+    id: scope
+    attributes:
+      label: Feature scope
+      description: Mô tả hành vi người dùng cần cover
+      placeholder: Người dùng đăng nhập bằng tài khoản hợp lệ và thấy trang Secure Area
+    validations:
+      required: true
+  - type: textarea
+    id: acceptance_criteria
+    attributes:
+      label: Acceptance criteria
+      description: Mỗi dòng một tiêu chí, kiểm chứng được
+      placeholder: |
+        - [ ] Trang hiển thị heading "Login Page"
+        - [ ] Đăng nhập đúng → URL là /secure và thấy "Welcome to the Secure Area."
+        - [ ] Đăng nhập sai → hiển thị thông báo lỗi
+    validations:
+      required: true
+  - type: textarea
+    id: test_data
+    attributes:
+      label: Test data
+      description: Dữ liệu test. KHÔNG ghi mật khẩu thật — dùng tên biến môi trường (vd. LOGIN_PASSWORD)
+      placeholder: "username: env LOGIN_USERNAME, password: env LOGIN_PASSWORD"
+    validations:
+      required: false
+  - type: textarea
+    id: notes
+    attributes:
+      label: Notes
+      description: Ràng buộc thêm, file liên quan, ngoài phạm vi
+    validations:
+      required: false
