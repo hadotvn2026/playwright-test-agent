@@ -14,10 +14,10 @@ jobs:
   monitor-production:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
         with:
-          node-version: '22'
+          node-version: lts/*
           cache: 'npm'
       - run: npm ci
       - run: npx playwright install --with-deps chromium
@@ -35,15 +35,24 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          # Kiểm tra xem đã có issue lỗi nào đang mở chưa để tránh spam issue mỗi 30 phút
-          EXISTING=$(gh issue list --label "agent-ready" --search "[Monitor Alert]" --json number -q 'length')
-          if [ "$EXISTING" -eq "0" ]; then
+          RUN_URL="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          # Chống spam mỗi 30 phút: tìm issue sự cố đang mở BẤT KỂ label (agent-ready, agent-in-progress,
+          # agent-review, agent-blocked). GitHub search bỏ qua dấu [ ], nên lọc thêm bằng startswith để không
+          # nhầm với issue có chữ "[Monitor Alert]" ở giữa tiêu đề.
+          EXISTING=$(gh issue list --state open --search '"[Monitor Alert]" in:title' --limit 100 \
+            --json number,title \
+            --jq '[.[] | select(.title | startswith("[Monitor Alert]"))] | sort_by(.number) | .[0].number // empty')
+          if [ -n "$EXISTING" ]; then
+            gh issue comment "$EXISTING" \
+              --body "🔁 Monitor vẫn fail ở run #${{ github.run_number }}: $RUN_URL"
+            echo "Incident #$EXISTING is still open - added the new run link instead of opening a duplicate."
+          else
             gh issue create \
               --title "[Monitor Alert] Production E2E check failed (Run #${{ github.run_number }})" \
               --label "agent-ready" \
               --body "$(cat <<EOF
           ## Incident Details
-          - **Workflow Run:** ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          - **Workflow Run:** ${RUN_URL}
           - **Trigger:** Scheduled E2E Monitor failed on \`main\`.
 
           ## Acceptance Criteria for Agent
@@ -52,6 +61,4 @@ jobs:
           3. Implement a fix following \`CLAUDE.md\` POM rules, pass \`npm run gate:static\`, verify with \`npx playwright test\`, and open a Pull Request with video proof.
           EOF
           )"
-          else
-            echo "An open incident issue already exists. Skipping duplicate creation."
           fi
