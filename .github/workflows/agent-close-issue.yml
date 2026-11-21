@@ -27,6 +27,7 @@ jobs:
       MERGED: ${{ github.event.pull_request.merged }}
       MERGE_SHA: ${{ github.event.pull_request.merge_commit_sha }}
       MERGED_BY: ${{ github.event.pull_request.merged_by.login }}
+      SELF_JOB: ${{ github.job }}
     steps:
       - name: Update linked issues
         run: |
@@ -38,8 +39,16 @@ jobs:
           fi
 
           if [ "$MERGED" = "true" ]; then
+            # Skip this workflow's own job (still running, so it has no result yet). A running check
+            # reports conclusion "" (empty string, not null), so `//` alone would print a blank:
+            # show "pending" for anything without a final result.
             CHECKS=$(gh pr view "$PR_NUMBER" --repo "$REPO" --json statusCheckRollup \
-              -q '.statusCheckRollup[] | "- `\(.name // .context)`: \(.conclusion // .state)"')
+              -q '.statusCheckRollup[]
+                  | select((.name // .context) != env.SELF_JOB)
+                  | "- `\(.name // .context)`: \(
+                      if (.conclusion // "") != "" then .conclusion
+                      elif (.state // "") != "" and .state != "PENDING" then .state
+                      else "pending" end)"')
             PROOF_URL=$(gh api "repos/$REPO/issues/$PR_NUMBER/comments" --paginate \
               -q '.[] | select(.body | startswith("<!-- agent-proof -->")) | .html_url' | tail -n1)
             BODY="✅ **Resolved by #${PR_NUMBER}** — merged into \`main\` as ${MERGE_SHA} by @${MERGED_BY}.
