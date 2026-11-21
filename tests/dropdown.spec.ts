@@ -1,34 +1,32 @@
-import { test, expect } from '@playwright/test';
+import { mergeTests } from '@playwright/test';
+import { test as herokuTest } from '../fixtures/heroku.fixture';
+import { test as qaDemoTest, expect } from '../fixtures/qademo.fixture';
 
-test('verify select a option success', async ({ page }) => {
-    await page.goto('https://the-internet.herokuapp.com/dropdown');
+const test = mergeTests(herokuTest, qaDemoTest);
 
-    await page.getByRole('combobox').selectOption({ label: 'Option 1' }); // select option by text
-    await expect(page.locator('#dropdown')).toHaveValue('1'); // verify option 1 is selected
+test('verify select a option success', async ({ dropdownPage }) => {
+    await dropdownPage.open();
 
-    await page.getByRole('combobox').selectOption([]); // unselect all options
-})
+    await dropdownPage.selectOptionByLabel('Option 1');
+    await expect(dropdownPage.dropdown).toHaveValue('1'); // verify option 1 is selected
 
-test('verify selecting multiple options success', async ({ page }) => {
-    await page.goto('https://qa-demo-site-ten.vercel.app/elements/dropdown')
+    await dropdownPage.clearSelection(); // unselect all options
+});
 
-    await page.getByTestId('dropdown-multiple')
-        .selectOption(['Java', 'Go']); // select multiple options
+test('verify selecting multiple options success', async ({ demoDropdownPage }) => {
+    await demoDropdownPage.open();
 
-    await expect(page.getByTestId('dropdown-multiple')).toHaveValues(['java', 'go']); // verify multiple options are selected
+    await demoDropdownPage.selectLanguages(['Java', 'Go']);
+    await expect(demoDropdownPage.languagesSelect).toHaveValues(['java', 'go']); // verify multiple options are selected
 
-    await page.getByTestId('dropdown-multiple')
-        .selectOption([]); // unselect all options
-    await expect(page.getByTestId('dropdown-multiple')).toHaveValues([]); // verify multiple options are selected
+    await demoDropdownPage.clearLanguages();
+    await expect(demoDropdownPage.languagesSelect).toHaveValues([]); // verify no option is selected
+});
 
-})
+test('verify standard select', async ({ demoDropdownPage }) => {
+    await demoDropdownPage.open();
 
-test('verify standard select', async ({ page }) => {
-    await page.goto('https://qa-demo-site-ten.vercel.app/elements/dropdown')
+    await demoDropdownPage.chooseFramework('Next.js');
 
-    await page.getByTestId('dropdown-shadcn-trigger').click();
-    await page.getByRole('option', { name: 'Next.js' }).click();
-
-    await expect(page.getByText('Selected: next')).toBeVisible(); // verify selected option is displayed
-
-})
+    await expect(demoDropdownPage.frameworkSelection).toHaveText('Selected: next'); // verify selected option is displayed
+});
