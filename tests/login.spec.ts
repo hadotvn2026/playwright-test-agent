@@ -1,10 +1,9 @@
 import { test, expect } from '../fixtures/heroku.fixture';
+import { requireEnv } from '../utils/env.utils';
 
 test('login successfully with valid credentials', async ({ loginPage }) => {
     await loginPage.open();
-    const username = process.env.USERNAME!;
-    const password = process.env.PASSWORD ?? 'defaultPassword';
-    await loginPage.login(username, password);
+    await loginPage.login(requireEnv('LOGIN_USERNAME'), requireEnv('LOGIN_PASSWORD'));
     await expect(loginPage.secureAreaHeading).toBeVisible();
 });
 
