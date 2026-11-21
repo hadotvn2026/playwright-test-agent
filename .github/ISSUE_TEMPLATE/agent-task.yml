@@ -1,4 +1,4 @@
-name: 🤖 Agent task (Playwright test)
+name: 🎭 ✳️ Agent task (Playwright test)
 description: Giao việc cho Claude Code. Chạy /agent-implement ở máy local để agent implement theo CLAUDE.md và mở PR kèm video bằng chứng.
 title: "[Agent] "
 labels: ["agent-ready"]
