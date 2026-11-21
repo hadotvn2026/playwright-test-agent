@@ -55,3 +55,10 @@ You are executing an automated Software Factory run for repository `pw2610`. Fol
 1. Run the mandatory static analysis gate:
    ```bash
    npm run gate:static
+
+---
+## Phase 4: Runtime Verification & Proof-of-Work Capture
+
+1. **Execute Affected Playwright Tests with Video & Trace:**
+   ```bash
+   npx playwright test <target-spec-file> --project=chromium --video=on --trace=on   
