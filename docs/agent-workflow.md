@@ -6,7 +6,7 @@ so the public repo holds no Claude credentials and nobody else can trigger the a
 
 ```mermaid
 flowchart LR
-    A["Bạn tạo issue<br/>(form 🤖 Agent task)"] -->|label agent-ready| B["Local: /agent-implement N<br/>spec check → code → gate → PR"]
+    A["Bạn tạo issue<br/>(form 🎭 ✳️ Agent task)"] -->|label agent-ready| B["Local: /agent-implement N<br/>spec check → code → gate → PR"]
     B -->|spec thiếu| X["agent-blocked<br/>Claude hỏi trên issue"]
     X -->|bạn trả lời + gắn lại agent-ready| B
     B -->|PR agent/issue-N| C["CI: gate-static + test<br/>agent-proof.yml: video/trace"]
@@ -62,7 +62,7 @@ To retry anything that is `agent-blocked`: fix the cause, then add `agent-ready`
 
 ## Daily use
 
-1. **New issue** → **🤖 Agent task (Playwright test)** → fill in Target URL, scope and acceptance criteria → Submit.
+1. **New issue** → **🎭 ✳️ Agent task (Playwright test)** → fill in Target URL, scope and acceptance criteria → Submit.
 2. In Claude Code in this repo: `/agent-implement` (takes the oldest `agent-ready` issue) or `/agent-implement <N>`.
 3. On the PR, check the CI checks and the **🎥 Verification proof** comment.
    - Something to change → leave review comments on GitHub, then run `/agent-implement <N>` again. Claude reads the comments, fixes, pushes; CI and the proof re-run.

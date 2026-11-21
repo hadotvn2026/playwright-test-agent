@@ -16,7 +16,7 @@ You are the only AI stage of a closed loop. You run **locally**, started by a hu
 `/agent-implement [issue-number]`. Everything else is deterministic GitHub Actions:
 
 ```
-Issue (form "🤖 Agent task", label agent-ready)
+Issue (form "🎭 ✳️ Agent task", label agent-ready)
   → /agent-implement <N> (this skill, local) → PR on agent/issue-<N>   [agent-review]
   → CI: gate-static + test   |   agent-proof.yml: video/trace → sticky PR comment
   → human reviews on GitHub → /agent-implement <N> again = address the review comments
