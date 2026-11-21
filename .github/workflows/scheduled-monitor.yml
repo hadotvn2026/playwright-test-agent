@@ -1,0 +1,57 @@
+name: Scheduled E2E Monitor & Auto-Issue Loop
+
+on:
+  schedule:
+    # Chạy tự động mỗi 30 phút một lần
+    - cron: '*/30 * * * *'
+  workflow_dispatch: # Cho phép bạn bấm nút chạy test thủ công trên GitHub UI bất cứ lúc nào
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  monitor-production:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+
+      - name: Run E2E Monitor Suite
+        id: pw_run
+        run: npx playwright test --project=chromium
+        env:
+         LOGIN_USERNAME: ${{ secrets.LOGIN_USERNAME }}
+         LOGIN_PASSWORD: ${{ secrets.LOGIN_PASSWORD }}
+
+      # Khép kín vòng lặp: Tự động tạo Issue khi monitor fail
+      - name: Open Incident Issue on Failure
+        if: failure()
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # Kiểm tra xem đã có issue lỗi nào đang mở chưa để tránh spam issue mỗi 30 phút
+          EXISTING=$(gh issue list --label "agent-ready" --search "[Monitor Alert]" --json number -q 'length')
+          if [ "$EXISTING" -eq "0" ]; then
+            gh issue create \
+              --title "[Monitor Alert] Production E2E check failed (Run #${{ github.run_number }})" \
+              --label "agent-ready" \
+              --body "$(cat <<EOF
+          ## Incident Details
+          - **Workflow Run:** ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          - **Trigger:** Scheduled E2E Monitor failed on \`main\`.
+
+          ## Acceptance Criteria for Agent
+          1. Inspect the failing test logs/trace from run #${{ github.run_number }} using \`gh run view ${{ github.run_id }} --log-failed\`.
+          2. Determine whether it is a broken locator, timing issue, or application regression.
+          3. Implement a fix following \`CLAUDE.md\` POM rules, pass \`npm run gate:static\`, verify with \`npx playwright test\`, and open a Pull Request with video proof.
+          EOF
+          )"
+          else
+            echo "An open incident issue already exists. Skipping duplicate creation."
+          fi
