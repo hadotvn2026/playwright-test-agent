@@ -1,5 +1,6 @@
 import { test as base } from '@playwright/test';
 import { BrokenImagesPage } from '../pages/broken-images.page';
+import { DateTimePickersPage } from '../pages/date-time-pickers.page';
 import { DropdownPage } from '../pages/dropdown.page';
 import { FileDownloadPage } from '../pages/file-download.page';
 import { FileUploadPage } from '../pages/file-upload.page';
@@ -9,6 +10,7 @@ import { TablePage } from '../pages/table.page';
 
 type HerokuFixtures = {
     brokenImagesPage: BrokenImagesPage,
+    dateTimePickersPage: DateTimePickersPage,
     dropdownPage: DropdownPage,
     fileDownloadPage: FileDownloadPage,
     fileUploadPage: FileUploadPage,
@@ -20,6 +22,9 @@ type HerokuFixtures = {
 export const test = base.extend<HerokuFixtures>({
     brokenImagesPage: async ({ page }, use) => {
         await use(new BrokenImagesPage(page));
+    },
+    dateTimePickersPage: async ({ page }, use) => {
+        await use(new DateTimePickersPage(page));
     },
     dropdownPage: async ({ page }, use) => {
         await use(new DropdownPage(page));
