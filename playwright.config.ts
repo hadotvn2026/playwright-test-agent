@@ -5,6 +5,8 @@ import path from 'path';
 // Load variables from .env file at the project root
 dotenv.config({ path: path.resolve(__dirname, '.dev.env') });
 
+const isProofRun = process.env.PROOF === '1';
+
 export default defineConfig({
   testDir: './tests',
   fullyParallel: true,
@@ -15,13 +17,16 @@ export default defineConfig({
 
   use: {
     baseURL: process.env.BASE_URL || 'https://playwright.dev',
-    trace: 'retain-on-failure',
+    // PROOF=1 records video + trace for every test and slows actions down so the
+    // recording is reviewable (used by the agent-proof workflow). Playwright CLI has
+    // no --video flag, so this env switch is the supported way to turn it on.
+    trace: isProofRun ? 'on' : 'retain-on-failure',
     screenshot: 'only-on-failure',
-    // Cấu hình video mặc định (agent có thể ghi đè bằng cờ --video=on khi cần quay bằng chứng)
     video: {
-      mode: 'retain-on-failure',
+      mode: isProofRun ? 'on' : 'retain-on-failure',
       size: { width: 1280, height: 720 },
     },
+    launchOptions: isProofRun ? { slowMo: 800 } : {},
   },
 
   projects: [

@@ -1,0 +1,71 @@
+name: Agent - Close Issue After Merge
+
+# Last step of the loop. When a PR into main is closed:
+#   merged     -> comment evidence (PR, merge commit, checks, proof) on every issue the PR
+#                 closes, label agent-done, make sure the issue is closed as completed
+#   not merged -> label the issues agent-blocked so a human decides what happens next
+# Fully deterministic: no Claude call, no API cost.
+on:
+  pull_request:
+    types: [closed]
+    branches: [main]
+
+permissions:
+  issues: write
+  pull-requests: read
+  contents: read
+
+jobs:
+  close-linked-issues:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      REPO: ${{ github.repository }}
+      PR_NUMBER: ${{ github.event.pull_request.number }}
+      PR_URL: ${{ github.event.pull_request.html_url }}
+      MERGED: ${{ github.event.pull_request.merged }}
+      MERGE_SHA: ${{ github.event.pull_request.merge_commit_sha }}
+      MERGED_BY: ${{ github.event.pull_request.merged_by.login }}
+    steps:
+      - name: Update linked issues
+        run: |
+          ISSUES=$(gh pr view "$PR_NUMBER" --repo "$REPO" --json closingIssuesReferences \
+            -q '.closingIssuesReferences[].number')
+          if [ -z "$ISSUES" ]; then
+            echo "PR #$PR_NUMBER does not close any issue - nothing to do"
+            exit 0
+          fi
+
+          if [ "$MERGED" = "true" ]; then
+            CHECKS=$(gh pr view "$PR_NUMBER" --repo "$REPO" --json statusCheckRollup \
+              -q '.statusCheckRollup[] | "- `\(.name // .context)`: \(.conclusion // .state)"')
+            PROOF_URL=$(gh api "repos/$REPO/issues/$PR_NUMBER/comments" --paginate \
+              -q '.[] | select(.body | startswith("<!-- agent-proof -->")) | .html_url' | tail -n1)
+            BODY="✅ **Resolved by #${PR_NUMBER}** — merged into \`main\` as ${MERGE_SHA} by @${MERGED_BY}.
+
+          **Checks on the merged PR**
+          ${CHECKS:-_(no checks reported)_}
+
+          **Evidence**
+          - Pull request: ${PR_URL}
+          - Video + trace proof: ${PROOF_URL:-_(no proof comment found)_}
+
+          _Closed automatically by \`agent-close-issue.yml\`._"
+            for ISSUE in $ISSUES; do
+              gh issue comment "$ISSUE" --repo "$REPO" --body "$(echo "$BODY" | sed 's/^          //')"
+              gh issue edit "$ISSUE" --repo "$REPO" \
+                --remove-label agent-review --remove-label agent-in-progress --remove-label agent-blocked \
+                --add-label agent-done
+              if [ "$(gh issue view "$ISSUE" --repo "$REPO" --json state -q .state)" = "OPEN" ]; then
+                gh issue close "$ISSUE" --repo "$REPO" --reason completed
+              fi
+              echo "Issue #$ISSUE closed with evidence"
+            done
+          else
+            for ISSUE in $ISSUES; do
+              gh issue comment "$ISSUE" --repo "$REPO" --body "⚠️ PR #${PR_NUMBER} was closed without merging. Re-add the \`agent-ready\` label to let Claude try again, or close this issue."
+              gh issue edit "$ISSUE" --repo "$REPO" \
+                --remove-label agent-review --remove-label agent-in-progress --add-label agent-blocked
+            done
+          fi

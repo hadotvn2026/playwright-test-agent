@@ -1,0 +1,74 @@
+name: Agent - Video Proof
+
+# On every push to an agent PR, re-run the spec files the PR adds or changes with
+# PROOF=1 (video + trace + slowMo), publish the recordings to the orphan `pr-proof`
+# branch (never merged, so main's history stays small) and update one sticky PR
+# comment with inline GIFs, MP4 links and Trace Viewer links.
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+    branches: [main]
+
+permissions:
+  contents: write       # push to the pr-proof branch
+  pull-requests: write  # sticky proof comment
+
+concurrency:
+  group: agent-proof-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  proof:
+    if: >-
+      startsWith(github.head_ref, 'agent/') &&
+      github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0
+
+      - name: Find spec files changed by this PR
+        id: specs
+        run: |
+          SPECS=$(git diff --name-only --diff-filter=AM \
+            "origin/${{ github.base_ref }}...HEAD" -- 'tests/*.spec.ts' | tr '\n' ' ')
+          echo "Changed specs: ${SPECS:-<none>}"
+          echo "list=$SPECS" >> "$GITHUB_OUTPUT"
+
+      - uses: actions/setup-node@v7
+        if: steps.specs.outputs.list != ''
+        with:
+          node-version: lts/*
+          cache: npm
+
+      - name: Install dependencies, Chromium and ffmpeg
+        if: steps.specs.outputs.list != ''
+        run: |
+          npm ci
+          npx playwright install --with-deps chromium
+          sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg
+
+      - name: Record specs (PROOF=1)
+        if: steps.specs.outputs.list != ''
+        continue-on-error: true # failures are reported in the proof comment; the `test` job gates merging
+        env:
+          PROOF: '1'
+          PLAYWRIGHT_JSON_OUTPUT_NAME: proof-results/results.json
+          LOGIN_USERNAME: ${{ secrets.LOGIN_USERNAME }}
+          LOGIN_PASSWORD: ${{ secrets.LOGIN_PASSWORD }}
+        run: |
+          npx playwright test ${{ steps.specs.outputs.list }} \
+            --project=chromium --retries=0 --output=proof-results/artifacts --reporter=list,json
+
+      - name: Publish proof to PR
+        if: steps.specs.outputs.list != ''
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO: ${{ github.repository }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: scripts/publish-proof.sh proof-results/results.json
