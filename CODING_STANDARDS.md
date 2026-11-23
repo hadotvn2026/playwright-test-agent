@@ -1,33 +1,28 @@
-# Coding Standards: Page Object Model (Playwright TypeScript)
+# Coding Standards (Playwright TypeScript POM)
 
-The single home of the rules for `pages/`, `tests/`, `fixtures/` and `utils/`. ESLint (`eslint.config.mjs`) already fails `npm run gate:static` on raw CSS/XPath locators, element handles (`page.$()`), `waitForTimeout`, and any `page.locator()` / `page.getBy*()` / `page.click()`-style call in `tests/`; the rules below cover what the linter cannot see.
+The single home of the rules for `pages/`, `tests/`, `fixtures/` and `utils/`.
 
-## Page Objects (`pages/*.page.ts`)
+**Done** when `npm run gate:static` passes and every spec you added or changed passes `npx playwright test <spec...> --project=chromium`. The static gate (`tsc` + `eslint.config.mjs`) enforces raw-locator, element-handle, `waitForTimeout`, missing-`await` and web-first-assertion rules, and rejects `page.locator()` / `page.getBy*()` / `page.click()`-style calls in `tests/`. The rules below are the ones no tool checks; apply every one to each file you add or change.
 
-### Locators
-- Declare every locator as a `private readonly` property and initialise it in the constructor.
-- Expose a locator as `readonly` (public) only when a spec asserts on it, e.g. `await expect(loginPage.errorMessage).toContainText(...)`. Mark it with a trailing comment: `// Exposed solely for web-first assertion in tests/`.
-- Pick the most resilient locator available, in this order:
+## Page objects (`pages/*.page.ts`)
+- Every locator is a `private readonly` property initialised in the constructor. The one exception is a locator a spec asserts on: make it `readonly` (public) and mark it `// Exposed solely for web-first assertion in tests/`.
+- Pick the most resilient locator, in this order:
   1. `page.getByRole(...)` with an accessible `name`
   2. `page.getByLabel(...)` / `page.getByPlaceholder(...)`
   3. `page.getByText(...)`, exact match preferred
   4. `page.getByTestId(...)`, only when no semantic role or label exists
-
-### Behaviour methods
-- Each public method is one complete user behaviour or business intent: `login(username, password)`, `uploadFile(filePath)`, `selectLanguages(labels)`, `downloadFile(fileName, targetDir)`. A method that only fills one field or clicks one button (`enterUsername()`, `clickLoginButton()`) belongs inside a larger behaviour instead.
-- Navigation to the page is its own method, named `open()`. Known exception: `pages/home.page.ts` names it `goto()`, and `tests/home.spec.ts` calls it that way.
-- Assertions (`expect(...)`) live in `tests/*.spec.ts`. Inside a page object, wait only to confirm a state transition before the method returns (e.g. `await this.page.waitForURL('**/status_codes')`).
-
-### Reference implementation
-`pages/login.page.ts` is the canonical example: role-based locators, two assertion-only `readonly` locators, `open()`, and one behaviour method `login(username, password)`. Read it before writing a new page object, and follow it rather than any example remembered from elsewhere.
+- Public methods are *behaviour methods*: each performs one complete user behaviour or business intent, such as `login(username, password)`, `uploadFile(filePath)`, `selectLanguages(labels)`, `downloadFile(fileName, targetDir)`. Single fills and clicks happen inside a behaviour method.
+- Navigation is its own method, `open()` (known exception: `pages/home.page.ts` uses `goto()`).
+- Assertions live in specs. A page object waits only to confirm a state transition before returning, e.g. `await this.page.waitForURL('**/status_codes')`.
+- `pages/login.page.ts` is the reference implementation: read it before writing a new page object, and match it rather than generic POM examples.
 
 ## Specs (`tests/*.spec.ts`)
-- Get page objects from a fixture (`fixtures/heroku.fixture.ts`, `fixtures/qademo.fixture.ts`, `fixtures/pages.fixture.ts`) and import `test`/`expect` from that fixture file.
-- A spec only orchestrates page-object methods and asserts with web-first assertions.
-- Read credentials with `requireEnv('NAME')` from `utils/env.utils.ts`, as `tests/login.spec.ts` does: `loginPage.login(requireEnv('LOGIN_USERNAME'), requireEnv('LOGIN_PASSWORD'))`.
+- Get page objects from the site's fixture and import `test`/`expect` from that fixture file.
+- A spec calls *behaviour methods* and asserts on their outcome.
+- Read credentials with `requireEnv('NAME')` from `utils/env.utils.ts`, e.g. `loginPage.login(requireEnv('LOGIN_USERNAME'), requireEnv('LOGIN_PASSWORD'))`.
 
 ## Fixtures (`fixtures/*.fixture.ts`)
-- Register each new page object in the fixture file for its site, so specs receive it by injection.
+- Register each new page object in its site's fixture file, so specs receive it by injection.
 
 ## Helpers (`utils/*.utils.ts`)
-- Keep helpers pure: plain functions with no `Page` or locators, like `utils/date.utils.ts` and `utils/env.utils.ts`.
+- Keep helpers pure: plain functions with no `Page` or locators.
