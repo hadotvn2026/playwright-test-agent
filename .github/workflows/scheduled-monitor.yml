@@ -58,7 +58,7 @@ jobs:
           ## Acceptance Criteria for Agent
           1. Inspect the failing test logs/trace from run #${{ github.run_number }} using \`gh run view ${{ github.run_id }} --log-failed\`.
           2. Determine whether it is a broken locator, timing issue, or application regression.
-          3. Implement a fix following \`CLAUDE.md\` POM rules, pass \`npm run gate:static\`, verify with \`npx playwright test\`, and open a Pull Request with video proof.
+          3. Implement a fix following \`CODING_STANDARDS.md\` POM rules, pass \`npm run gate:static\`, verify with \`npx playwright test\`, and open a Pull Request with video proof.
           EOF
           )"
           fi
