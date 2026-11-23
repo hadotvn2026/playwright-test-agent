@@ -1,6 +1,6 @@
 # Coding Standards: Page Object Model (Playwright TypeScript)
 
-Detailed rules for `pages/`, `tests/` and `fixtures/`. ESLint (`eslint.config.mjs`) already fails `npm run gate:static` on raw CSS/XPath locators, element handles (`page.$()`), `waitForTimeout`, and any `page.locator()` / `page.getBy*()` / `page.click()`-style call in `tests/`; the rules below cover what the linter cannot see.
+The single home of the rules for `pages/`, `tests/`, `fixtures/` and `utils/`. ESLint (`eslint.config.mjs`) already fails `npm run gate:static` on raw CSS/XPath locators, element handles (`page.$()`), `waitForTimeout`, and any `page.locator()` / `page.getBy*()` / `page.click()`-style call in `tests/`; the rules below cover what the linter cannot see.
 
 ## Page Objects (`pages/*.page.ts`)
 
@@ -15,7 +15,7 @@ Detailed rules for `pages/`, `tests/` and `fixtures/`. ESLint (`eslint.config.mj
 
 ### Behaviour methods
 - Each public method is one complete user behaviour or business intent: `login(username, password)`, `uploadFile(filePath)`, `selectLanguages(labels)`, `downloadFile(fileName, targetDir)`. A method that only fills one field or clicks one button (`enterUsername()`, `clickLoginButton()`) belongs inside a larger behaviour instead.
-- Navigation to the page is its own method (`open()` in most pages).
+- Navigation to the page is its own method, named `open()`. Known exception: `pages/home.page.ts` names it `goto()`, and `tests/home.spec.ts` calls it that way.
 - Assertions (`expect(...)`) live in `tests/*.spec.ts`. Inside a page object, wait only to confirm a state transition before the method returns (e.g. `await this.page.waitForURL('**/status_codes')`).
 
 ### Reference implementation
@@ -28,3 +28,6 @@ Detailed rules for `pages/`, `tests/` and `fixtures/`. ESLint (`eslint.config.mj
 
 ## Fixtures (`fixtures/*.fixture.ts`)
 - Register each new page object in the fixture file for its site, so specs receive it by injection.
+
+## Helpers (`utils/*.utils.ts`)
+- Keep helpers pure: plain functions with no `Page` or locators, like `utils/date.utils.ts` and `utils/env.utils.ts`.
