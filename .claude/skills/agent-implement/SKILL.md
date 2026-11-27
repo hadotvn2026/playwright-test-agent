@@ -29,7 +29,7 @@ Run the phases in order; every gate runs and its real result goes in the PR. Eac
 
 Every check must pass; on the first failure, stop and report it.
 
-1. `gh auth status` succeeds.
+1. `gh auth status` succeeds and its token scopes include `project` (needed by Phase 1 step 5; the human adds it with `gh auth refresh -s project`).
 2. `git status --porcelain` is empty. If not, stop and ask the human what to do with the local changes.
 3. `git fetch origin main`.
 4. **Pick the issue:**
@@ -64,6 +64,7 @@ Every check must pass; on the first failure, stop and report it.
    - `gh issue edit <N> --remove-label agent-ready --remove-label agent-in-progress --add-label agent-blocked`
    - **Stop.** The human answers and re-adds `agent-ready`.
 4. Lock: `gh issue edit <N> --remove-label agent-ready --remove-label agent-blocked --add-label agent-in-progress`
+5. Board: `scripts/project-sync.sh <N>` puts the issue on the project with the nearest open milestone, the **current sprint** and Status `In Progress`. Its last line confirms all three; a `warning:` line (no milestone open, no sprint covering today) goes into the final report to the human. Status `Done` is set by the project itself when the issue closes.
 
 ## Phase 2: Branch
 

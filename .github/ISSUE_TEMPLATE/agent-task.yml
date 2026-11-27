@@ -2,6 +2,7 @@ name: 🎭 ✳️ Agent task (Playwright test)
 description: Giao việc cho Claude Code. Chạy /agent-implement ở máy local để agent implement theo CODING_STANDARDS.md và mở PR kèm video bằng chứng.
 title: "[Agent] "
 labels: ["agent-ready"]
+projects: ["hadotvn2026/1"]
 body:
   - type: markdown
     attributes:
