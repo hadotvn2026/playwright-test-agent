@@ -1,6 +1,6 @@
 import { mergeTests } from '@playwright/test';
-import { test as herokuTest } from '../fixtures/heroku.fixture';
-import { test as qaDemoTest, expect } from '../fixtures/qademo.fixture';
+import { test as herokuTest } from '../../fixtures/e2e/heroku.fixture';
+import { test as qaDemoTest, expect } from '../../fixtures/e2e/qademo.fixture';
 
 const test = mergeTests(herokuTest, qaDemoTest);
 

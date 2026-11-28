@@ -1,4 +1,4 @@
-import { test, expect } from '../fixtures/heroku.fixture';
+import { test, expect } from '../../fixtures/e2e/heroku.fixture';
 import * as fs from 'node:fs';
 
 test('verify able to download a file', async ({ fileDownloadPage }) => {

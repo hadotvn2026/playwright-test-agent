@@ -1,4 +1,4 @@
-import { test, expect } from '../fixtures/heroku.fixture';
+import { test, expect } from '../../fixtures/e2e/heroku.fixture';
 
 test('verify max due person is Jason Doe', async ({ tablePage }) => {
     await tablePage.open();

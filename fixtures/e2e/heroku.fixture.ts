@@ -1,12 +1,12 @@
 import { test as base } from '@playwright/test';
-import { BrokenImagesPage } from '../pages/broken-images.page';
-import { DateTimePickersPage } from '../pages/date-time-pickers.page';
-import { DropdownPage } from '../pages/dropdown.page';
-import { FileDownloadPage } from '../pages/file-download.page';
-import { FileUploadPage } from '../pages/file-upload.page';
-import { LoginPage } from '../pages/login.page';
-import { StatusCodesPage } from '../pages/status-codes.page';
-import { TablePage } from '../pages/table.page';
+import { BrokenImagesPage } from '../../pages/broken-images.page';
+import { DateTimePickersPage } from '../../pages/date-time-pickers.page';
+import { DropdownPage } from '../../pages/dropdown.page';
+import { FileDownloadPage } from '../../pages/file-download.page';
+import { FileUploadPage } from '../../pages/file-upload.page';
+import { LoginPage } from '../../pages/login.page';
+import { StatusCodesPage } from '../../pages/status-codes.page';
+import { TablePage } from '../../pages/table.page';
 
 type HerokuFixtures = {
     brokenImagesPage: BrokenImagesPage,

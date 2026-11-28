@@ -1,5 +1,5 @@
-import { test, expect } from '../fixtures/heroku.fixture';
-import { expectedSummary, type NativePickerValues } from '../pages/date-time-pickers.page';
+import { test, expect } from '../../fixtures/e2e/heroku.fixture';
+import { expectedSummary, type NativePickerValues } from '../../pages/date-time-pickers.page';
 
 const SPECIFIC_VALUES = {
     date: '2026-04-15',

@@ -1,6 +1,6 @@
-import { test, expect } from '../fixtures/calculator.fixture';
-import { type MetricBmiInput } from '../pages/bmi-calculator.page';
-import { calculateBmi, classifyBmi, type BmiClassification } from '../utils/bmi.utils';
+import { test, expect } from '../../fixtures/e2e/calculator.fixture';
+import { type MetricBmiInput } from '../../pages/bmi-calculator.page';
+import { calculateBmi, classifyBmi, type BmiClassification } from '../../utils/e2eUtils/bmi.utils';
 
 test('BMI calculator page is displayed', async ({ bmiCalculatorPage }) => {
     await bmiCalculatorPage.open();

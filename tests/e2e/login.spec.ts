@@ -1,5 +1,5 @@
-import { test, expect } from '../fixtures/heroku.fixture';
-import { requireEnv } from '../utils/env.utils';
+import { test, expect } from '../../fixtures/e2e/heroku.fixture';
+import { requireEnv } from '../../utils/e2eUtils/env.utils';
 
 test('login successfully with valid credentials', async ({ loginPage }) => {
     await loginPage.open();

@@ -1,4 +1,4 @@
-import { test, expect } from '../fixtures/heroku.fixture';
+import { test, expect } from '../../fixtures/e2e/heroku.fixture';
 
 const KNOWN_BROKEN_IMAGES = ['asdf.jpg', 'hjkl.jpg'];
 

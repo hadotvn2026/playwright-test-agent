@@ -1,5 +1,5 @@
 import { type Page, type Locator } from '@playwright/test';
-import { formatDateWithOrdinalDay } from '../utils/date.utils';
+import { formatDateWithOrdinalDay } from '../utils/e2eUtils/date.utils';
 
 export class DatePickerPage {
     private readonly page: Page;

@@ -1,4 +1,4 @@
-import { test, expect } from '../fixtures/pages.fixture';
+import { test, expect } from '../../fixtures/e2e/pages.fixture';
 
 test.describe('Playwright.dev home page', () => {
   test.beforeEach(async ({ homePage }) => {

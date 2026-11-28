@@ -1,4 +1,4 @@
-import { test, expect } from '../fixtures/heroku.fixture';
+import { test, expect } from '../../fixtures/e2e/heroku.fixture';
 
 test('upload a file', async ({ fileUploadPage }) => {
     await fileUploadPage.open();
