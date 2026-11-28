@@ -76,7 +76,7 @@ The `agent/` prefix is required: `agent-proof.yml` only records proof for branch
 ## Phase 3: Implement
 
 1. Read `CODING_STANDARDS.md`, then the existing files in `pages/`, `fixtures/`, `tests/`, `utils/` closest to the issue's feature, to match their naming and patterns.
-2. Implement the acceptance criteria with every `CODING_STANDARDS.md` rule applied to each file you add or change.
+2. Implement the acceptance criteria with every `CODING_STANDARDS.md` rule applied to each file you add or change. Write no comments in the code: no `//`, `/* */` or JSDoc.
 3. **Scope:** the diff holds only what the issue needs; `.github/`, `scripts/`, `.claude/` and dependencies change only when the issue asks. Unrelated problems go under "Follow-ups" in the PR description.
 
 ## Phase 4: Gates

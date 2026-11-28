@@ -4,7 +4,7 @@ export class FileUploadPage {
     private readonly page: Page;
     private readonly fileInput: Locator;
     private readonly uploadButton: Locator;
-    readonly uploadResult: Locator; // Exposed solely for web-first assertion in tests/
+    readonly uploadResult: Locator;
 
     constructor(page: Page) {
         this.page = page;

@@ -1,4 +1,3 @@
-/** Reads a required environment variable (from .dev.env locally or GitHub secrets on CI). */
 export function requireEnv(name: string): string {
     const value = process.env[name];
     if (!value) {

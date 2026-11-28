@@ -8,10 +8,8 @@ type RowData = {
 
 type TableId = 'table1' | 'table2';
 
-// Position of each table on https://the-internet.herokuapp.com/tables
 const TABLE_INDEX: Record<TableId, number> = { table1: 0, table2: 1 };
 
-// Column order: Last Name | First Name | Email | Due | Web Site | Action
 const COLUMN = { lastName: 0, firstName: 1, due: 3 } as const;
 
 export class TablePage {
@@ -28,7 +26,6 @@ export class TablePage {
     }
 
     async getTableData(tableId: TableId): Promise<RowData[]> {
-        // Data rows contain `cell`s; the header row contains `columnheader`s only
         const rows = this.tables
             .nth(TABLE_INDEX[tableId])
             .getByRole('row')

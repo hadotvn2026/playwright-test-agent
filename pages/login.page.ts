@@ -5,8 +5,8 @@ export class LoginPage {
     private readonly usernameInput: Locator;
     private readonly passwordInput: Locator;
     private readonly loginButton: Locator;
-    readonly errorMessage: Locator; // Exposed solely for web-first assertion in tests/
-    readonly secureAreaHeading: Locator; // Exposed solely for web-first assertion in tests/
+    readonly errorMessage: Locator;
+    readonly secureAreaHeading: Locator;
 
     constructor(page: Page) {
         this.page = page;

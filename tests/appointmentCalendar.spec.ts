@@ -1,7 +1,5 @@
 import { test, expect } from '../fixtures/heroku.fixture';
 
-// The calendar opens on the current month by default, so every test pins the
-// starting month with ?month=YYYY-MM to stay independent of the run date.
 test.describe('Date & Time Pickers - calendar widget (Appointment)', () => {
     test('opens on the month given in ?month', async ({ dateTimePickersPage }) => {
         await dateTimePickersPage.openCalendarAt('2026-02');

@@ -2,7 +2,7 @@ import { type Page, type Locator } from '@playwright/test';
 
 export class DropdownPage {
     private readonly page: Page;
-    readonly dropdown: Locator; // Exposed solely for web-first assertion in tests/
+    readonly dropdown: Locator;
 
     constructor(page: Page) {
         this.page = page;

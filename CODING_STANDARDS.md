@@ -4,8 +4,11 @@ The single home of the rules for `pages/`, `tests/`, `fixtures/` and `utils/`.
 
 **Done** when `npm run gate:static` passes and every spec you added or changed passes `npx playwright test <spec...> --project=chromium`. The static gate (`tsc` + `eslint.config.mjs`) enforces raw-locator, element-handle, `waitForTimeout`, missing-`await` and web-first-assertion rules, and rejects `page.locator()` / `page.getBy*()` / `page.click()`-style calls in `tests/`. The rules below are the ones no tool checks; apply every one to each file you add or change.
 
+## All files
+- No comments: no `//` line or trailing comments, no `/* */` blocks, no JSDoc. Names of classes, methods, variables and test titles carry the meaning; remove any comment found in a file you touch.
+
 ## Page objects (`pages/*.page.ts`)
-- Every locator is a `private readonly` property initialised in the constructor. The one exception is a locator a spec asserts on: make it `readonly` (public) and mark it `// Exposed solely for web-first assertion in tests/`.
+- Every locator is a `private readonly` property initialised in the constructor. The one exception is a locator a spec asserts on: make it `readonly` (public).
 - Pick the most resilient locator, in this order:
   1. `page.getByRole(...)` with an accessible `name`
   2. `page.getByLabel(...)` / `page.getByPlaceholder(...)`

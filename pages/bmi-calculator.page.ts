@@ -17,14 +17,12 @@ export class BmiCalculatorPage {
     private readonly weightInput: Locator;
     private readonly genderLabels: Record<Gender, Locator>;
     private readonly calculateButton: Locator;
-    readonly heading: Locator; // Exposed solely for web-first assertion in tests/
-    readonly result: Locator; // Exposed solely for web-first assertion in tests/
+    readonly heading: Locator;
+    readonly result: Locator;
 
     constructor(page: Page) {
         this.page = page;
         this.metricUnitsTab = page.getByRole('link', { name: 'Metric Units', exact: true });
-        // The inputs have no accessible name: take the textbox of the innermost form row
-        // whose label cell matches (the page's layout rows also contain these cells).
         const inputInRow = (label: string): Locator => page
             .getByRole('row')
             .filter({ hasNot: page.getByRole('row') })
@@ -33,7 +31,6 @@ export class BmiCalculatorPage {
         this.ageInput = inputInRow('Age');
         this.heightInput = inputInRow('Height');
         this.weightInput = inputInRow('Weight');
-        // The radio inputs are visually hidden behind custom marks; their visible label is clicked.
         this.genderLabels = {
             Male: page.getByText('Male', { exact: true }),
             Female: page.getByText('Female', { exact: true }),
@@ -47,7 +44,6 @@ export class BmiCalculatorPage {
         await this.page.goto('https://www.calculator.net/bmi-calculator.html');
     }
 
-    /** Calculates BMI on the Metric Units tab and waits for the result page to load. */
     async calculateMetric({ age, gender, heightCm, weightKg }: MetricBmiInput): Promise<void> {
         await this.metricUnitsTab.click();
         await this.ageInput.fill(String(age));

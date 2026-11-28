@@ -11,7 +11,6 @@ export class BrokenImagesPage {
 
     constructor(page: Page) {
         this.page = page;
-        // Broken images render with no size, so include hidden ones too
         this.images = page.getByRole('img', { includeHidden: true });
     }
 
@@ -19,7 +18,6 @@ export class BrokenImagesPage {
         await this.page.goto('https://the-internet.herokuapp.com/broken_images');
     }
 
-    /** Requests every image on the page and returns its src with the HTTP status. */
     async getImageStatuses(): Promise<ImageStatus[]> {
         const statuses: ImageStatus[] = [];
         for (const image of await this.images.all()) {

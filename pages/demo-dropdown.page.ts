@@ -3,8 +3,8 @@ import { type Page, type Locator } from '@playwright/test';
 export class DemoDropdownPage {
     private readonly page: Page;
     private readonly shadcnSelectTrigger: Locator;
-    readonly languagesSelect: Locator; // Exposed solely for web-first assertion in tests/
-    readonly frameworkSelection: Locator; // Exposed solely for web-first assertion in tests/
+    readonly languagesSelect: Locator;
+    readonly frameworkSelection: Locator;
 
     constructor(page: Page) {
         this.page = page;
@@ -25,7 +25,6 @@ export class DemoDropdownPage {
         await this.languagesSelect.selectOption([]);
     }
 
-    /** Opens the custom (shadcn) select and picks a framework from its list. */
     async chooseFramework(name: string): Promise<void> {
         await this.shadcnSelectTrigger.click();
         await this.page.getByRole('option', { name }).click();
