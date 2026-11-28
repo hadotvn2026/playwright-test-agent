@@ -29,6 +29,18 @@ flowchart LR
 
 To retry anything that is `agent-blocked`: fix the cause, then add `agent-ready` again.
 
+## Project board, milestone, sprint
+
+Every issue is tracked on the [Playwright Agent Loop](https://github.com/users/hadotvn2026/projects/1) project, with a weekly **Sprint** iteration field.
+
+| Step | What happens | Done by |
+|---|---|---|
+| Issue created with the form | Added to the project (Status `Todo`) | Issue form `projects:` key + the project's "Item added" workflow |
+| `/agent-implement N` locks the issue | Nearest open milestone, **current sprint**, Status `In Progress` | `scripts/project-sync.sh N` (any issue, including `[Monitor Alert]` ones and issues not made with the form) |
+| Issue closes after merge | Status `Done` | The project's built-in "Item closed" workflow |
+
+Sprints are 1 week, starting Monday. When the last configured sprint is near, add more in the project's Sprint field settings; until then the script prints a `warning:` and leaves Sprint empty.
+
 ## What runs where
 
 | Step | Where | Uses Claude? |
@@ -48,7 +60,7 @@ To retry anything that is `agent-blocked`: fix the cause, then add `agent-ready`
 
 ## One-time setup
 
-1. `gh auth login` on your machine (Claude Code uses your `gh` to read issues and open PRs).
+1. `gh auth login` on your machine (Claude Code uses your `gh` to read issues and open PRs), then `gh auth refresh -s project` so it can update the project board.
 2. Repository secrets `LOGIN_USERNAME` / `LOGIN_PASSWORD` for the tests (already set). Locally they come from `.dev.env`.
 3. Create the labels:
    ```bash
