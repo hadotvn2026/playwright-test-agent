@@ -1,6 +1,5 @@
 import { test, expect } from '../fixtures/heroku.fixture';
 
-// The page under test intentionally serves two broken images.
 const KNOWN_BROKEN_IMAGES = ['asdf.jpg', 'hjkl.jpg'];
 
 test('detects exactly the known broken images', async ({ brokenImagesPage }) => {

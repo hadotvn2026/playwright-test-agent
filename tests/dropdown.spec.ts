@@ -8,19 +8,19 @@ test('verify select a option success', async ({ dropdownPage }) => {
     await dropdownPage.open();
 
     await dropdownPage.selectOptionByLabel('Option 1');
-    await expect(dropdownPage.dropdown).toHaveValue('1'); // verify option 1 is selected
+    await expect(dropdownPage.dropdown).toHaveValue('1');
 
-    await dropdownPage.clearSelection(); // unselect all options
+    await dropdownPage.clearSelection();
 });
 
 test('verify selecting multiple options success', async ({ demoDropdownPage }) => {
     await demoDropdownPage.open();
 
     await demoDropdownPage.selectLanguages(['Java', 'Go']);
-    await expect(demoDropdownPage.languagesSelect).toHaveValues(['java', 'go']); // verify multiple options are selected
+    await expect(demoDropdownPage.languagesSelect).toHaveValues(['java', 'go']);
 
     await demoDropdownPage.clearLanguages();
-    await expect(demoDropdownPage.languagesSelect).toHaveValues([]); // verify no option is selected
+    await expect(demoDropdownPage.languagesSelect).toHaveValues([]);
 });
 
 test('verify standard select', async ({ demoDropdownPage }) => {
@@ -28,5 +28,5 @@ test('verify standard select', async ({ demoDropdownPage }) => {
 
     await demoDropdownPage.chooseFramework('Next.js');
 
-    await expect(demoDropdownPage.frameworkSelection).toHaveText('Selected: next'); // verify selected option is displayed
+    await expect(demoDropdownPage.frameworkSelection).toHaveText('Selected: next');
 });

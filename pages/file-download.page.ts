@@ -17,7 +17,6 @@ export class FileDownloadPage {
         await this.page.goto('https://the-internet.herokuapp.com/download');
     }
 
-    /** Clicks the file link, waits for the download and saves it into targetDir. */
     async downloadFile(fileName: string, targetDir: string): Promise<DownloadResult> {
         const downloadPromise = this.page.waitForEvent('download');
         await this.page.getByRole('link', { name: fileName }).click();

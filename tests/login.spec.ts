@@ -7,7 +7,6 @@ test('login successfully with valid credentials', async ({ loginPage }) => {
     await expect(loginPage.secureAreaHeading).toBeVisible();
 });
 
-//data driven test for login failure with invalid credentials
 [
     { username: 'tomsmit', password: 'SuperSecretPassword!', expectedErrorMessage: 'Your username is invalid!\n×' },
     { username: '', password: 'SuperSecretPassword!', expectedErrorMessage: 'Your username is invalid!\n×' },

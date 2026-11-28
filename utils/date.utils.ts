@@ -7,7 +7,6 @@ function getOrdinalSuffix(day: number): string {
     return ({ 1: 'st', 2: 'nd', 3: 'rd' }[day % 10] ?? 'th');
 }
 
-/** Formats a date in en-US, appending an ordinal suffix to the day (e.g. "November 28th, 2026"). */
 export function formatDateWithOrdinalDay(
     date: Date,
     options: Intl.DateTimeFormatOptions,

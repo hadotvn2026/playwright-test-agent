@@ -7,7 +7,6 @@ test('BMI calculator page is displayed', async ({ bmiCalculatorPage }) => {
     await expect(bmiCalculatorPage.heading).toBeVisible();
 });
 
-// One adult per classification, each BMI well inside its range (170 cm height).
 const cases: Array<{ classification: BmiClassification, input: MetricBmiInput }> = [
     { classification: 'Severe thinness', input: { age: 30, gender: 'Female', heightCm: 170, weightKg: 44 } },
     { classification: 'Moderate thinness', input: { age: 25, gender: 'Male', heightCm: 170, weightKg: 47 } },
