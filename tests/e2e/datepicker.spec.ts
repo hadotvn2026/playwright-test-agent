@@ -1,5 +1,5 @@
-import { test, expect } from '../fixtures/qademo.fixture';
-import { daysFromToday, formatDateWithOrdinalDay } from '../utils/date.utils';
+import { test, expect } from '../../fixtures/e2e/qademo.fixture';
+import { daysFromToday, formatDateWithOrdinalDay } from '../../utils/e2eUtils/date.utils';
 
 test('verify able to select date from datepicker', async ({ datePickerPage }) => {
     const date = daysFromToday(7);

@@ -1,6 +1,6 @@
 import { test as base } from '@playwright/test';
-import { DatePickerPage } from '../pages/date-picker.page';
-import { DemoDropdownPage } from '../pages/demo-dropdown.page';
+import { DatePickerPage } from '../../pages/date-picker.page';
+import { DemoDropdownPage } from '../../pages/demo-dropdown.page';
 
 type QaDemoFixtures = {
     datePickerPage: DatePickerPage,

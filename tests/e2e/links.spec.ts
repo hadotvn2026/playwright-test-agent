@@ -1,4 +1,4 @@
-import { test, expect } from '../fixtures/heroku.fixture';
+import { test, expect } from '../../fixtures/e2e/heroku.fixture';
 
 test('verify hyperlink success', async ({ page, statusCodesPage }) => {
     await statusCodesPage.open();

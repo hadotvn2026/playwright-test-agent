@@ -1,4 +1,4 @@
-import { test, expect } from '../fixtures/heroku.fixture';
+import { test, expect } from '../../fixtures/e2e/heroku.fixture';
 
 test.describe('Date & Time Pickers - calendar widget (Appointment)', () => {
     test('opens on the month given in ?month', async ({ dateTimePickersPage }) => {

@@ -30,7 +30,7 @@ export default defineConfig(
 
   // 2. Luật kiến trúc POM nghiêm ngặt: Chỉ áp dụng cho thư mục tests/
   {
-    files: ['tests/**/*.ts'],
+    files: ['tests/e2e/**/*.ts'],
     rules: {
       'no-restricted-syntax': [
         'error',

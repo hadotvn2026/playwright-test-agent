@@ -82,8 +82,8 @@ The `agent/` prefix is required: `agent-proof.yml` only records proof for branch
 ## Phase 4: Gates
 
 1. **Static gate:** `npm run gate:static`
-2. **Runtime gate**, every spec you added or changed: `npx playwright test <spec-file...> --project=chromium`
-   To record video + trace locally, prefix with `PROOF=1` (Playwright has no `--video` CLI flag). `agent-proof.yml` publishes the PR's recordings.
+2. **Runtime gate**, every spec you added or changed: `npx playwright test <spec-file...> --project=chromium` for `tests/e2e/`, `--project=api` for `tests/integration/`.
+   To record video + trace locally, prefix with `PROOF=1` (Playwright has no `--video` CLI flag). `agent-proof.yml` publishes the PR's recordings for changed `tests/e2e/` specs.
 3. If a gate still fails after a reasonable effort, open the PR as **draft** and explain the failure in the description.
 
 ## Phase 5: Commit, Push & Pull Request

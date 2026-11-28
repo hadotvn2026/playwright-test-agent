@@ -2,7 +2,12 @@
 
 The single home of the rules for `pages/`, `tests/`, `fixtures/` and `utils/`.
 
-**Done** when `npm run gate:static` passes and every spec you added or changed passes `npx playwright test <spec...> --project=chromium`. The static gate (`tsc` + `eslint.config.mjs`) enforces raw-locator, element-handle, `waitForTimeout`, missing-`await` and web-first-assertion rules, and rejects `page.locator()` / `page.getBy*()` / `page.click()`-style calls in `tests/`. The rules below are the ones no tool checks; apply every one to each file you add or change.
+## Layout
+- `pages/`: page objects, flat.
+- `tests/e2e/`, `fixtures/e2e/`, `utils/e2eUtils/`: browser end-to-end specs, their fixtures and helpers; run with `--project=chromium`.
+- `tests/integration/`, `fixtures/integration/`: API specs using Playwright's `request` fixture (no browser) and their fixtures; run with `--project=api`.
+
+**Done** when `npm run gate:static` passes and every spec you added or changed passes `npx playwright test <spec...> --project=chromium` (e2e) or `--project=api` (integration). The static gate (`tsc` + `eslint.config.mjs`) enforces raw-locator, element-handle, `waitForTimeout`, missing-`await` and web-first-assertion rules, and rejects `page.locator()` / `page.getBy*()` / `page.click()`-style calls in `tests/e2e/`. The rules below are the ones no tool checks; apply every one to each file you add or change.
 
 ## All files
 - No comments: no `//` line or trailing comments, no `/* */` blocks, no JSDoc. Names of classes, methods, variables and test titles carry the meaning; remove any comment found in a file you touch.
@@ -19,13 +24,13 @@ The single home of the rules for `pages/`, `tests/`, `fixtures/` and `utils/`.
 - Assertions live in specs. A page object waits only to confirm a state transition before returning, e.g. `await this.page.waitForURL('**/status_codes')`.
 - `pages/login.page.ts` is the reference implementation: read it before writing a new page object, and match it rather than generic POM examples.
 
-## Specs (`tests/*.spec.ts`)
+## Specs (`tests/e2e/*.spec.ts`)
 - Get page objects from the site's fixture and import `test`/`expect` from that fixture file.
 - A spec calls *behaviour methods* and asserts on their outcome.
-- Read credentials with `requireEnv('NAME')` from `utils/env.utils.ts`, e.g. `loginPage.login(requireEnv('LOGIN_USERNAME'), requireEnv('LOGIN_PASSWORD'))`.
+- Read credentials with `requireEnv('NAME')` from `utils/e2eUtils/env.utils.ts`, e.g. `loginPage.login(requireEnv('LOGIN_USERNAME'), requireEnv('LOGIN_PASSWORD'))`.
 
-## Fixtures (`fixtures/*.fixture.ts`)
+## Fixtures (`fixtures/e2e/*.fixture.ts`)
 - Register each new page object in its site's fixture file, so specs receive it by injection.
 
-## Helpers (`utils/*.utils.ts`)
+## Helpers (`utils/e2eUtils/*.utils.ts`)
 - Keep helpers pure: plain functions with no `Page` or locators.

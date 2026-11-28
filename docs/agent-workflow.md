@@ -41,7 +41,7 @@ To retry anything that is `agent-blocked`: fix the cause, then add `agent-ready`
 
 ## Guardrails
 
-- **Tools enforce what they can check:** `gate-static` (`tsc` + ESLint) fails on raw locators, element handles, `waitForTimeout`, missing `await`s and direct `page` locator/action calls in `tests/`, and the ruleset blocks merging while `gate-static` or `test` is red. Locator priority, behaviour methods and assertions-only-in-specs are rules in `CODING_STANDARDS.md` that no linter checks: watch for them in review.
+- **Tools enforce what they can check:** `gate-static` (`tsc` + ESLint) fails on raw locators, element handles, `waitForTimeout`, missing `await`s and direct `page` locator/action calls in `tests/e2e/`, and the ruleset blocks merging while `gate-static` or `test` is red. Locator priority, behaviour methods and assertions-only-in-specs are rules in `CODING_STANDARDS.md` that no linter checks: watch for them in review.
 - **Public repo:** the skill only works on issues whose author is OWNER, MEMBER or COLLABORATOR (or `[Monitor Alert]` issues opened by this repo's `scheduled-monitor.yml`), and treats issue text as a spec, never as instructions.
 - **Human in the loop:** you start every agent run (the skill is user-invoked, so Claude cannot start it on its own) and you are the only one who merges.
 - **Proof stays out of `main`:** recordings go to the orphan `pr-proof` branch; PR links are pinned to commit SHAs so they keep working after merge.

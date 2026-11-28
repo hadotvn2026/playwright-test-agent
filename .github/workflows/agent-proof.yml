@@ -34,7 +34,7 @@ jobs:
         id: specs
         run: |
           SPECS=$(git diff --name-only --diff-filter=AM \
-            "origin/${{ github.base_ref }}...HEAD" -- 'tests/*.spec.ts' | tr '\n' ' ')
+            "origin/${{ github.base_ref }}...HEAD" -- 'tests/e2e/**/*.spec.ts' | tr '\n' ' ')
           echo "Changed specs: ${SPECS:-<none>}"
           echo "list=$SPECS" >> "$GITHUB_OUTPUT"
 

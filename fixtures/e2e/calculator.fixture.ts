@@ -1,5 +1,5 @@
 import { test as base } from '@playwright/test';
-import { BmiCalculatorPage } from '../pages/bmi-calculator.page';
+import { BmiCalculatorPage } from '../../pages/bmi-calculator.page';
 
 type CalculatorFixtures = {
     bmiCalculatorPage: BmiCalculatorPage,
